@@ -31,5 +31,9 @@
     "embarkjs-swarm": "^6.0.0",
     "embarkjs-web3": "^6.0.0",
     "embarkjs-whisper": "^6.0.0"
+  },
+  "dependencies": {
+    "@material-ui/core": "^4.11.0",
+    "@material-ui/styles": "^4.10.0"
   }
 }
