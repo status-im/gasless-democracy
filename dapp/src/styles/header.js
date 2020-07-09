@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
     marginLeft: 'auto',
     marginRight: '3rem',
     cursor: 'pointer',
-    gridColumnEnd: '49'
+    gridColumnEnd: '50'
   },
   connected: {
     color: '#44D058',

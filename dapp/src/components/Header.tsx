@@ -12,13 +12,12 @@ const formatAccount = (account: string): string => {
 
 type HeaderProps = {
   account: string,
+  isStatus: boolean
   enableEthereum: EnableEthereum
 }
 
-function Header({account, enableEthereum}: HeaderProps) {
+function Header({account, isStatus, enableEthereum}: HeaderProps) {
   const classes: any = useStyles()
-  console.log('classnames', classNames(classes.connect, {[classes.connected]: !!account}), classes.connect, classes.connected)
-  console.log({account, classes}, !!account)
   return (
     <div className={classes.root}>
       <Typography component={'span'} className={classNames(classes.connect, {[classes.connected]: !!account})} onClick={!account ? enableEthereum : console.log}>
@@ -27,6 +26,7 @@ function Header({account, enableEthereum}: HeaderProps) {
           <div>Connected</div>
         </div>}
         {!account && <span>Connect</span>}
+        {isStatus && <span>Status Api Available</span>}
       </Typography>
     </div>
   )

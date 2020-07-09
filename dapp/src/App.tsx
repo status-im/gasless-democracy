@@ -49,7 +49,10 @@ async function enableEthereum(setAccount: SetAccount): Promise<string | undefine
 
 function App() {
   const classes: any = useStyles()
-  const [account, setAccount] = useState('');
+  const [account, setAccount] = useState('')
+  const [isStatus, setIsStatus] = useState(() => {
+    return !!window && !! window.ethereum && !! window.ethereum.status
+  })
 
   useEffect(() => {
     grabAddress(setAccount)
@@ -58,7 +61,10 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <div className={classes.root}>
-        <Header account={account} enableEthereum={() => enableEthereum(setAccount)} />
+        <Header
+          account={account}
+          isStatus={isStatus}
+          enableEthereum={() => enableEthereum(setAccount)} />
       </div>
     </ThemeProvider>
   );
