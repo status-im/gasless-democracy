@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react'
+import React from 'react'
 import Typography from '@material-ui/core/Typography';
 import classNames from 'classnames'
 import { EnableEthereum } from '../types'

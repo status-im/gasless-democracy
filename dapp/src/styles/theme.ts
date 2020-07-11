@@ -5,7 +5,7 @@ import { createMuiTheme } from '@material-ui/core/styles';
 declare module "@material-ui/core/styles/createBreakpoints" {
     interface BreakpointOverrides {
         xs: false; // removes the `xs` breakpoint
-        sm: false;
+        sm: true;
         md: true;
         lg: false;
         xl: false;
@@ -21,6 +21,7 @@ export default createMuiTheme({
     },
     breakpoints: {
         values: {
+            sm: 320,
             md: 860
         }
     },

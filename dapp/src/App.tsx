@@ -5,6 +5,7 @@ import theme from './styles/theme'
 import useStyles from './styles/app'
 import { SetAccount } from './types'
 import Header from './components/Header'
+import CreatePoll from './components/CreatePoll'
 
 declare global {
   interface Window {
@@ -65,6 +66,7 @@ function App() {
           account={account}
           isStatus={isStatus}
           enableEthereum={() => enableEthereum(setAccount)} />
+        <CreatePoll />
       </div>
     </ThemeProvider>
   );
