@@ -112,7 +112,7 @@ const useStyles = makeStyles((theme) => ({
 
 }))
 
-const renderLabel = (formLabelClass: string, idFor: string, label: string, isRequired?: boolean) => (
+const renderLabel = (formLabelClass: string, idFor: string, label: JSX.Element | string, isRequired?: boolean) => (
   <InputLabel
     shrink
     htmlFor={idFor}
@@ -144,7 +144,7 @@ type InputFnProps = {
   onBlur?: React.FocusEventHandler<{}>,
   value?: string,
   multiline?: boolean,
-  topRight?: string
+  topRight?: JSX.Element
 }
 
 function Input({

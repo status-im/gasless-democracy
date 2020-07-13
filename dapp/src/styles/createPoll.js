@@ -10,11 +10,18 @@ const useStyles = makeStyles(theme => ({
       gridColumn: '8 / 42',
     }
   },
+  adornmentText: {
+    cursor: 'pointer',
+    color: '#4360DF'
+  },
   title: {
     gridColumn: '3 / 49'
   },
   fieldWidth: {
     gridColumn: '3 / 49'
+  },
+  datePicker: {
+    borderRadius: '25px'
   }
 }))
 
