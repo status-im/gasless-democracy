@@ -7,6 +7,9 @@ import useStyles from '../styles/createPoll'
 import StatusTextField from './base/TextField'
 import DatePicker from './base/DatePicker'
 import StatusButton from './base/Button'
+import { prettySign, verifySignedMessage } from '../utils/signing'
+import { uploadFilesToIpfs, uploadToIpfs } from '../utils/ipfs'
+import { sendToPublicChat } from '../utils/status'
 
 type FormikValues = {
   title: string,
@@ -16,7 +19,12 @@ type FormikValues = {
   description: string
 }
 
+const POLLS = 'polls'
 const TEN_DAYS_FUTURE = new Date(new Date().getTime()+(10*24*60*60*1000))
+
+const createJSON = (values: FormikValues): string => {
+  return JSON.stringify(values, null, 2)
+}
 function CreatePoll() {
   const [showPreview, setPreview] = useState<boolean>(false)
   const classes: any = useStyles()
@@ -31,7 +39,13 @@ function CreatePoll() {
         datePicker: TEN_DAYS_FUTURE,
         description: ''
       }}
-      onSubmit={(values) => console.log({values})}
+      onSubmit={async (values) => {
+        const message = createJSON(values)
+        const ipfsHash = await uploadToIpfs(message)
+        const signedMessage = await prettySign(ipfsHash)
+        const stringified = JSON.stringify(signedMessage)
+        await sendToPublicChat(POLLS, stringified)
+      }}
     >
       {({
         values,
