@@ -10,6 +10,7 @@ import StatusButton from './base/Button'
 import { prettySign, verifySignedMessage } from '../utils/signing'
 import { uploadFilesToIpfs, uploadToIpfs } from '../utils/ipfs'
 import { sendToPublicChat } from '../utils/status'
+import { POLLS_CHANNEL } from './constants'
 
 type FormikValues = {
   title: string,
@@ -19,7 +20,6 @@ type FormikValues = {
   description: string
 }
 
-const POLLS = 'polls'
 const TEN_DAYS_FUTURE = new Date(new Date().getTime()+(10*24*60*60*1000))
 
 const createJSON = (values: FormikValues): string => {
@@ -44,7 +44,7 @@ function CreatePoll() {
         const ipfsHash = await uploadToIpfs(message)
         const signedMessage = await prettySign(ipfsHash)
         const stringified = JSON.stringify(signedMessage)
-        await sendToPublicChat(POLLS, stringified)
+        await sendToPublicChat(POLLS_CHANNEL, stringified)
       }}
     >
       {({

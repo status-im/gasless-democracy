@@ -6,10 +6,12 @@ import useStyles from './styles/app'
 import { SetAccount } from './types'
 import Header from './components/Header'
 import CreatePoll from './components/CreatePoll'
+import ListPolls from './components/ListPolls'
 
 declare global {
   interface Window {
     ethereum: any;
+    messages: object;
   }
 }
 
@@ -67,6 +69,7 @@ function App() {
           isStatus={isStatus}
           enableEthereum={() => enableEthereum(setAccount)} />
         <CreatePoll />
+        <ListPolls />
       </div>
     </ThemeProvider>
   );
