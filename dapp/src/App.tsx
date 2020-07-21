@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { Route, Link, Switch, HashRouter as Router } from 'react-router-dom'
 import { ThemeProvider } from '@material-ui/core/styles'
 import EmbarkJS from './embarkArtifacts/embarkjs'
 import theme from './styles/theme'
@@ -68,8 +69,12 @@ function App() {
           account={account}
           isStatus={isStatus}
           enableEthereum={() => enableEthereum(setAccount)} />
-        <CreatePoll />
-        <ListPolls />
+        <Router>
+        <Switch>
+          <Route path="/(|list-polls)" component={ListPolls} />
+          <Route path="create-poll" component={CreatePoll} />
+        </Switch>
+        </Router>
       </div>
     </ThemeProvider>
   );

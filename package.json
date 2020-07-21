@@ -35,6 +35,9 @@
   "dependencies": {
     "@material-ui/core": "^4.11.0",
     "@material-ui/styles": "^4.10.0",
-    "ipfs-http-client": "^44.3.0"
+    "eth-crypto": "^1.6.0",
+    "ethereumjs-util": "^6.0.0",
+    "ipfs-http-client": "^44.3.0",
+    "react-router-dom": "^5.2.0"
   }
 }

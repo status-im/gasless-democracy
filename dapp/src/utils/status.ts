@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { signedMessage } from './signing'
 export {}
 
 declare global {
@@ -35,14 +36,16 @@ export async function getChatMessages(): Promise<any> {
     }
 }
 
-type Message = {
+export type Message = {
     alias: string,
     text: string,
     timestamp: number,
     from: string,
-    messageId: string
+    messageId: string,
+    verified?: boolean,
+    sigMsg?: signedMessage
 }
-type Topics = {
+export type Topics = {
     [chat: string]: Message[]
 }
 
@@ -57,7 +60,7 @@ interface MessagesEvent extends CustomEvent {
     }
 }
 
-export function useChatMessages(): Topics | undefined {
+export function useChatMessages(): [Topics | undefined, Function] {
     const [chatMessages, setChatMessages] = useState<Topics>()
 
     function messageHandler(event: MessagesEvent) {
@@ -65,6 +68,7 @@ export function useChatMessages(): Topics | undefined {
         const { data } = event.data
         if (!data) return
         const { chat, messages } = data
+        if (!chat) return
         setChatMessages((prevState: Topics | undefined) => ({
             ...prevState,
             [chat]: messages
@@ -79,6 +83,5 @@ export function useChatMessages(): Topics | undefined {
         }
     })
 
-    return chatMessages
-
+    return [chatMessages, setChatMessages]
 }
