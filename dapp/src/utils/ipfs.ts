@@ -1,5 +1,7 @@
 // @ts-ignore
 import ipfsClient from 'ipfs-http-client'
+// @ts-ignore
+import BufferList from 'bl/BufferList'
 
 const ipfsHttpStatus = ipfsClient({ host: 'ipfs.status.im', protocol: 'https', port: '443' })
 
@@ -31,6 +33,26 @@ const uploadToIpfsRaw = async (str: string) => {
 export const uploadToIpfs = async (str:string): Promise<string> => {
     const res = await uploadToIpfsRaw(str)
     return res.cid.string
+}
+
+export const getFromIpfs = async (cid:string) => {
+    try {
+        for await (const file of ipfsHttpStatus.get(cid)) {
+            //console.log(file.path)
+
+            if (!file.content) continue;
+
+            const content = new BufferList()
+            for await (const chunk of file.content) {
+                content.append(chunk)
+            }
+
+            //console.log('content', {content, cid}, content.toString())
+            return content.toString()
+        }
+    } catch(e) {
+        return null
+    }
 }
 
 export const uploadToIpfsGateway = async (files: ipfsFile[]): Promise<string> => {

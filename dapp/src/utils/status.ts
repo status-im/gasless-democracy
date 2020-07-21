@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { signedMessage } from './signing'
+import { Message, Topics } from '../types'
 export {}
 
 declare global {
@@ -36,18 +36,6 @@ export async function getChatMessages(): Promise<any> {
     }
 }
 
-export type Message = {
-    alias: string,
-    text: string,
-    timestamp: number,
-    from: string,
-    messageId: string,
-    verified?: boolean,
-    sigMsg?: signedMessage
-}
-export type Topics = {
-    [chat: string]: Message[]
-}
 
 type Data = {
     chat: string,

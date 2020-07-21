@@ -11,18 +11,11 @@ import { prettySign, verifySignedMessage } from '../utils/signing'
 import { uploadFilesToIpfs, uploadToIpfs } from '../utils/ipfs'
 import { sendToPublicChat } from '../utils/status'
 import { POLLS_CHANNEL } from './constants'
-
-type FormikValues = {
-  title: string,
-  subtitle: string,
-  pollOptions: string,
-  datePicker: Date | null,
-  description: string
-}
+import { IPollInfo } from '../types'
 
 const TEN_DAYS_FUTURE = new Date(new Date().getTime()+(10*24*60*60*1000))
 
-const createJSON = (values: FormikValues): string => {
+const createJSON = (values: IPollInfo): string => {
   return JSON.stringify(values, null, 2)
 }
 function CreatePoll() {
@@ -54,7 +47,7 @@ function CreatePoll() {
         handleChange,
         handleBlur,
         setFieldValue
-      }: FormikProps<FormikValues>) => {
+      }: FormikProps<IPollInfo>) => {
         return (
           <form className={classes.root} onSubmit={handleSubmit}>
             <Typography className={classes.title} variant="h3">Create a poll</Typography>
