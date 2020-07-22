@@ -8,6 +8,7 @@ import { SetAccount } from './types'
 import Header from './components/Header'
 import CreatePoll from './components/CreatePoll'
 import ListPolls from './components/ListPolls'
+import { MessagesProvider } from './context/messages/context'
 
 declare global {
   interface Window {
@@ -64,6 +65,7 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
+      <MessagesProvider>
       <div className={classes.root}>
         <Header
           account={account}
@@ -76,6 +78,7 @@ function App() {
         </Switch>
         </Router>
       </div>
+      </MessagesProvider>
     </ThemeProvider>
   );
 }

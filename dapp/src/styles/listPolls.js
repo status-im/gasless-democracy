@@ -29,6 +29,9 @@ const useStyles = makeStyles(theme => ({
   },
   cardSubTitle: {
     lineHeight: '1.5rem'
+  },
+  voteNow: {
+    color: theme.palette.primary[500]
   }
 }))
 

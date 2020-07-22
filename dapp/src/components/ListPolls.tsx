@@ -1,10 +1,11 @@
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { Fragment, useEffect, useState, useContext } from 'react'
 import classnames from 'classnames'
 import {
   gotoPublicChat,
   getChatMessages,
   useChatMessages
 } from '../utils/status'
+import { MessagesContext, IMessagesContext } from '../context/messages/context'
 import { verifySignedMessage } from '../utils/signing'
 import { Topics, Message, ISignedMessage, IEnrichedMessage, IPollInfo, IFormattedDate } from '../types'
 import Typography from '@material-ui/core/Typography'
@@ -19,8 +20,16 @@ async function gotoPolls() {
   getChatMessages()
 }
 
-async function enrichMessages(messages: Message[], setState: Function) {
-  const updated = messages.map(async (message): Promise<IEnrichedMessage | Message> => {
+async function parseEnrichMessages(messages: Topics, setState: Function) {
+  const parsed: Topics | undefined = await parseMessages(messages)
+  if (!parsed) return
+  const rawPolls: Message[] = parsed['polls']
+  const polls: Message[] = await enrichMessages(rawPolls)
+  setState({ ...parsed, polls })
+}
+
+async function enrichMessages(messages: Message[]) {
+  const updated = messages.map(async (message): Promise<Message> => {
     const { sigMsg } = message
     if (!message || !sigMsg || !sigMsg.msg) return message
     const res: string = await getFromIpfs(sigMsg.msg)
@@ -32,10 +41,10 @@ async function enrichMessages(messages: Message[], setState: Function) {
     return message
   })
   const resolved = await Promise.all(updated)
-  setState(resolved)
+  return resolved
 }
 
-async function parseMessages(messages: Topics | undefined, setState: Function) {
+async function parseMessages(messages: Topics | undefined) {
   if (!messages) return
   const fmtMessages: Topics = {}
   const keys = Object.keys(messages)
@@ -59,7 +68,7 @@ async function parseMessages(messages: Topics | undefined, setState: Function) {
     const verified = parsed.filter(m => m.verified === true)
     fmtMessages[key] = verified
   })
-  setState(fmtMessages)
+  return fmtMessages
 }
 
 interface ITableCard {
@@ -70,6 +79,7 @@ const isOdd = (num: number): boolean => !!(num % 2)
 function TableCards({ polls }: ITableCard) {
   const classes: any = useStyles()
   const { cardText, cellColor } = classes
+  console.log({polls})
 
   return (
     <Fragment>
@@ -87,6 +97,7 @@ function TableCards({ polls }: ITableCard) {
             <Typography className={classnames(cellStyling, classes.cardTitle)}>{title}</Typography>
             <Typography className={classnames(cellStyling, classes.cardSubTitle)}>{description}</Typography>
             <Typography className={lightText}>{plainText}</Typography>
+            <Typography className={classnames(cellStyling, classes.voteNow)}>Vote now</Typography>
           </Fragment>
         )
 
@@ -97,8 +108,11 @@ function TableCards({ polls }: ITableCard) {
 
 function ListPolls() {
   const [rawMessages] = useChatMessages()
-  const [chatMessages, setChatMessages] = useState()
+  //const [chatMessages, setChatMessages] = useState()
   const [enrichedPolls, setEnrichedPolls] = useState()
+  const messagesContext = useContext(MessagesContext)
+  const { dispatchSetPolls, dispatchSetTopics, chatMessages } = messagesContext
+
   const classes: any = useStyles()
 
   useEffect(() => {
@@ -106,14 +120,10 @@ function ListPolls() {
   }, [])
 
   useEffect(() => {
-    parseMessages(rawMessages, setChatMessages)
+    if (rawMessages && dispatchSetTopics) parseEnrichMessages(rawMessages, dispatchSetTopics)
   }, [rawMessages])
 
-  useEffect(() => {
-   if (chatMessages) enrichMessages(chatMessages['polls'], setEnrichedPolls)
-  }, [chatMessages])
-
-  console.log({chatMessages, rawMessages})
+  console.log({chatMessages, rawMessages, messagesContext})
   return (
     <Fragment>
       <div className={classes.root}>
@@ -121,7 +131,7 @@ function ListPolls() {
           buttonText="Goto #polls to get started"
           onClick={gotoPolls}
         />}
-        {!!enrichedPolls && <TableCards polls={enrichedPolls} />}
+        {!!chatMessages && <TableCards polls={chatMessages['polls'] || []} />}
       </div>
     </Fragment>
   )
