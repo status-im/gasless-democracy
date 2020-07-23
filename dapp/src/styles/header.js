@@ -13,6 +13,18 @@ const useStyles = makeStyles(theme => ({
   accountText: {
     color: '#939BA1'
   },
+  network:{
+    color: '#939BA1',
+    gridColumn: '8 / 25'
+  },
+  networkIndicator: {
+    gridColumn: '5 / 5',
+    marginTop: '0.5rem',
+    height: '0.75rem',
+    width: '0.75rem',
+    backgroundColor: 'rgb(48, 189, 159)',
+    borderRadius: '50%'
+  },
   connect: {
     color: theme.palette.primary[500],
     fontSize: '15px',

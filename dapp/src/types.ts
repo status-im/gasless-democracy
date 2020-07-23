@@ -5,8 +5,14 @@ export type IPollInfo = {
     subtitle: string,
     pollOptions: string,
     datePicker: Date | null,
-    description: string
+    description: string,
+    network?: Network
 }
+export enum Network {
+    MAINNET = 'main',
+    ROPSTEN = 'ropsten'
+}
+
 export type ISignedMessage = {
     address: string,
     msg: string,

@@ -12,6 +12,7 @@ import { uploadFilesToIpfs, uploadToIpfs } from '../utils/ipfs'
 import { sendToPublicChat } from '../utils/status'
 import { POLLS_CHANNEL } from './constants'
 import { IPollInfo } from '../types'
+import { getNetwork } from '../utils/network'
 
 const TEN_DAYS_FUTURE = new Date(new Date().getTime()+(10*24*60*60*1000))
 
@@ -33,7 +34,8 @@ function CreatePoll() {
         description: ''
       }}
       onSubmit={async (values) => {
-        const message = createJSON(values)
+        const network = await getNetwork()
+        const message = createJSON({ ...values, network })
         const ipfsHash = await uploadToIpfs(message)
         const signedMessage = await prettySign(ipfsHash)
         const stringified = JSON.stringify(signedMessage)
