@@ -33,9 +33,6 @@ export type Message = {
 export type Topics = {
     [chat: string]: Message[]
 }
-export interface IEnrichedMessage extends ISignedMessage {
-    pollInfo: IPollInfo
-}
 export type IFormattedDate = {
     plainText: string,
     daysRemaining: number,

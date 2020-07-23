@@ -8,6 +8,7 @@ import { SetAccount } from './types'
 import Header from './components/Header'
 import CreatePoll from './components/CreatePoll'
 import ListPolls from './components/ListPolls'
+import Poll from './components/Poll'
 import { MessagesProvider } from './context/messages/context'
 
 declare global {
@@ -74,7 +75,8 @@ function App() {
         <Router>
         <Switch>
           <Route path="/(|list-polls)" component={ListPolls} />
-          <Route path="create-poll" component={CreatePoll} />
+          <Route path="/create-poll" component={CreatePoll} />
+          <Route path="/poll/:id" component={Poll} />
         </Switch>
         </Router>
       </div>

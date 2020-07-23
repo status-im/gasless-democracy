@@ -1,19 +1,21 @@
 import React, { Fragment, useEffect, useState, useContext } from 'react'
+import { Link } from 'react-router-dom'
 import classnames from 'classnames'
 import {
   gotoPublicChat,
   getChatMessages,
   useChatMessages
 } from '../utils/status'
-import { MessagesContext, IMessagesContext } from '../context/messages/context'
+import { MessagesContext } from '../context/messages/context'
 import { verifySignedMessage } from '../utils/signing'
-import { Topics, Message, ISignedMessage, IEnrichedMessage, IPollInfo, IFormattedDate } from '../types'
+import { Topics, Message, ISignedMessage, IPollInfo, IFormattedDate } from '../types'
 import Typography from '@material-ui/core/Typography'
 import StatusButton from './base/Button'
 import useStyles from '../styles/listPolls'
 import { getFromIpfs } from '../utils/ipfs'
 import { POLLS_CHANNEL } from './constants'
 import { getFormattedDate } from '../utils/dates'
+import { getNetwork } from '../utils/network'
 
 async function gotoPolls() {
   await gotoPublicChat(POLLS_CHANNEL)
@@ -24,11 +26,18 @@ async function parseEnrichMessages(messages: Topics, setState: Function) {
   const parsed: Topics | undefined = await parseMessages(messages)
   if (!parsed) return
   const rawPolls: Message[] = parsed['polls']
-  const polls: Message[] = await enrichMessages(rawPolls)
+  const network = await getNetwork()
+  const enrichedPolls: Message[] = await enrichMessages(rawPolls)
+  const polls = enrichedPolls.filter(
+    p => {
+      if (!!p.pollInfo && !!p.pollInfo.network) {
+        return p.pollInfo.network === network
+      }
+  })
   setState({ ...parsed, polls })
 }
 
-async function enrichMessages(messages: Message[]) {
+async function enrichMessages(messages: Message[]): Promise<Message[]> {
   const updated = messages.map(async (message): Promise<Message> => {
     const { sigMsg } = message
     if (!message || !sigMsg || !sigMsg.msg) return message
@@ -79,7 +88,6 @@ const isOdd = (num: number): boolean => !!(num % 2)
 function TableCards({ polls }: ITableCard) {
   const classes: any = useStyles()
   const { cardText, cellColor } = classes
-  console.log({polls})
 
   return (
     <Fragment>
@@ -97,7 +105,9 @@ function TableCards({ polls }: ITableCard) {
             <Typography className={classnames(cellStyling, classes.cardTitle)}>{title}</Typography>
             <Typography className={classnames(cellStyling, classes.cardSubTitle)}>{description}</Typography>
             <Typography className={lightText}>{plainText}</Typography>
-            <Typography className={classnames(cellStyling, classes.voteNow)}>Vote now</Typography>
+            <Link to={pollUrl} className={classnames(cellStyling, classes.link)}>
+              <Typography className={classnames(cellStyling, classes.voteNow)}>Vote now</Typography>
+            </Link>
           </Fragment>
         )
 
@@ -108,10 +118,8 @@ function TableCards({ polls }: ITableCard) {
 
 function ListPolls() {
   const [rawMessages] = useChatMessages()
-  //const [chatMessages, setChatMessages] = useState()
-  const [enrichedPolls, setEnrichedPolls] = useState()
   const messagesContext = useContext(MessagesContext)
-  const { dispatchSetPolls, dispatchSetTopics, chatMessages } = messagesContext
+  const { dispatchSetTopics, chatMessages } = messagesContext
 
   const classes: any = useStyles()
 
@@ -123,7 +131,6 @@ function ListPolls() {
     if (rawMessages && dispatchSetTopics) parseEnrichMessages(rawMessages, dispatchSetTopics)
   }, [rawMessages])
 
-  console.log({chatMessages, rawMessages, messagesContext})
   return (
     <Fragment>
       <div className={classes.root}>

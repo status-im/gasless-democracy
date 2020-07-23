@@ -10,28 +10,20 @@ const useStyles = makeStyles(theme => ({
       gridColumn: '8 / 42',
     }
   },
-  cardText: {
-    gridColumn: '1 / 49',
-    lineHeight: '2rem',
-    padding: '0.25rem 1rem',
-    color: '#000000'
+  title: {
+    gridColumn: '3 / 45',
+    fontSize: '3rem'
   },
-  cellColor: {
-    background: '#F5F7F8'
+  subtitle: {
+    gridColumn: '2 / 45',
+    fontSize: '2rem'
   },
-  cardLightText: {
-    color: '#545353'
+  description: {
+    gridColumn: '3 / 45',
+    fontSize: '1rem'
   },
-  cardTitle: {
-    fontSize: '1.2rem',
-    fontWeight: 500,
-    paddingTop: '1rem'
-  },
-  cardSubTitle: {
-    lineHeight: '1.5rem'
-  },
-  voteNow: {
-    color: theme.palette.primary[500]
+  dropDown: {
+    gridColumn: '3 / 45'
   },
   link: {
     gridColumn: '1 / 49',
