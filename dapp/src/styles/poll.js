@@ -36,6 +36,24 @@ const useStyles = makeStyles(theme => ({
     '&:hover': {
       textDecoration: 'underline'
     }
+  },
+  progress: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(48, [col] 1fr)',
+    gridColumn: '1 / 49',
+    placeItems: 'center'
+  },
+  progressText: {
+    gridColumn: '1 / 8',
+    placeSelf: 'start'
+  },
+  progressBar: {
+    gridColumn: '3 / 43'
+  },
+  resultText: {
+    gridColumn: '1/ 49',
+    placeSelf: 'center',
+    fontSize: '1.5rem'
   }
 }))
 

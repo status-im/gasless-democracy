@@ -5,6 +5,8 @@ import { MessagesContext } from '../context/messages/context'
 import Typography from '@material-ui/core/Typography'
 import TextField from '@material-ui/core/TextField'
 import MenuItem from '@material-ui/core/MenuItem'
+import LinearProgress, { LinearProgressProps } from '@material-ui/core/LinearProgress'
+import Box from '@material-ui/core/Box'
 import { Formik, FormikProps } from 'formik'
 import StatusButton from './base/Button'
 import { sendToPublicChat } from '../utils/status'
@@ -16,7 +18,7 @@ import {
   useChatMessages
 } from '../utils/status'
 import { verifyMessages } from '../utils/messages'
-import { Topics, IAccountSnapshotQuery, IBalanceByAddress } from '../types'
+import { Topics, IAccountSnapshotQuery, IBalanceByAddress, Message } from '../types'
 import { ApolloClient, InMemoryCache } from '@apollo/client'
 import { getAccountBalances } from '../queries'
 
@@ -81,6 +83,61 @@ async function enrichVotes(topics: Topics): Promise<Topics> {
   return enrichedTopics
 }
 
+function tabulateVotes(votes: Message[], ballots: string[]): number[] {
+  if (!votes || !ballots) return []
+  const votesByIndex: number[] = new Array(ballots.length).fill(0)
+  votes.map(vote => {
+    const { accountSnapshot, sigMsg } = vote
+    if (!accountSnapshot || !sigMsg) return
+    const { amount } = accountSnapshot
+    const castVote = ballots.findIndex(b => b === sigMsg.msg)
+    if (castVote === -1) return
+    votesByIndex[castVote] += Number(amount)
+  })
+  return votesByIndex
+}
+
+interface IProgressLabel extends LinearProgressProps {
+  ballot: string
+}
+
+function LinearProgressWithLabel(props: IProgressLabel) {
+  const classes: any = useStyles()
+  const { value, ballot } = props
+  if (value === undefined || !ballot) return <Fragment />
+  return (
+    <Box className={classes.progress}>
+      <Typography className={classes.progressText}>{ballot}</Typography>
+      <Box width="100%" mr={1} className={classes.progressBar}>
+        <LinearProgress variant="determinate" {...props} />
+      </Box>
+      <Box minWidth={35}>
+        <Typography variant="body2" color="textSecondary">{`${Math.round(
+          value,
+        )}%`}</Typography>
+      </Box>
+    </Box>
+  );
+}
+type IVoteProgress = {
+  ballots: string[],
+  tabulated: number[]
+}
+function DisplayVoteProgress({ballots, tabulated}: IVoteProgress) {
+  const total = tabulated.reduce((a,b) => a+b)
+  const classes: any = useStyles()
+  return (
+    <Fragment>
+      <Typography className={classes.resultText}>Vote results</Typography>
+      {ballots.map((ballot, idx) => {
+        const count = tabulated[idx]
+        const progress = Math.floor(count / total * 100)
+        return <LinearProgressWithLabel value={progress} ballot={ballot} />
+      })}
+    </Fragment>
+  )
+}
+
 type IBallot = {
   option: string
 }
@@ -99,13 +156,15 @@ function Poll() {
 
   if (!chatMessages) return <Fragment />
   const selectedPoll= chatMessages['polls'].find(p => p.messageId === id)
-  if (!selectedPoll || !selectedPoll.pollInfo) return <Fragment />
+  if (!selectedPoll || !selectedPoll.pollInfo) return (<div>poll not found</div>)
   const { pollInfo } = selectedPoll
   const { description, title, subtitle, pollOptions } = pollInfo
-  const options = pollOptions.split(',')
+  const options: string[] = pollOptions.split(',')
+  const votes: Message[] = chatMessages[topic]
+  const tabulated: number[] = tabulateVotes(votes, options)
   // TODO Add method to tabulate votes
   // get all votes, filter by messageId, filter out not verified, grab all addresses, get balances, enrich votes with balances
-  console.log({messagesContext, rawMessages})
+  console.log({messagesContext, rawMessages, votes, tabulated})
 
   return (
     <Formik
@@ -152,12 +211,12 @@ function Poll() {
               onClick={handleSubmit}
             />
             <Divider className={classes.divider} />
-            <StatusButton
+            {!tabulated.length ? <StatusButton
               type="button"
               className={classes.button}
               buttonText="Goto room and get poll results"
               onClick={() => gotoPoll(topic)}
-            />
+            /> : <DisplayVoteProgress ballots={options} tabulated={tabulated} />}
           </form>
       )}
       }
