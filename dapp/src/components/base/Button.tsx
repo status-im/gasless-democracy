@@ -46,16 +46,18 @@ type ButtonProps = {
   buttonText: string,
   confirmed?: boolean,
   loading?: boolean,
-  onClick: any
+  onClick: any,
+  type?: "button" | "reset" | "submit"
 }
 
 function StatusButton(props: ButtonProps) {
   const { className, disabled, buttonText, confirmed, loading, onClick } = props
   const classes = useStyles()
   const { check, formButton, disabledButton, buttonContent, progress } = classes
+  const buttonType = props.type ? props.type : 'submit'
   return (
     <Fragment>
-      <Button className={classnames(formButton, className)} disabled={disabled} type="submit" variant="contained" classes={{ disabled: disabledButton }} onClick={onClick}>
+      <Button className={classnames(formButton, className)} disabled={disabled} type={buttonType} variant="contained" classes={{ disabled: disabledButton }} onClick={onClick}>
         <div className={buttonContent}>
           {confirmed && <Check className={check} />}
           {loading && <CircularProgress className={progress} size={24} disableShrink />}

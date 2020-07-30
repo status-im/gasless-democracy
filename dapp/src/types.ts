@@ -28,7 +28,8 @@ export type Message = {
     verified?: boolean,
     sigMsg?: ISignedMessage
     pollInfo?: IPollInfo
-    formattedEndDate?: IFormattedDate
+    formattedEndDate?: IFormattedDate,
+    accountSnapshot?: IAccountSnapshotQuery
 }
 export type Topics = {
     [chat: string]: Message[]
@@ -37,4 +38,20 @@ export type IFormattedDate = {
     plainText: string,
     daysRemaining: number,
     hoursRemaining: number
+}
+
+export type IAccountSnapshotQuery = {
+    _typename: "AccountBalanceSnapshot",
+    id: string,
+    amount: string,
+    block: string,
+    timestamp: string,
+    account: {
+        id: string,
+        _typename: "Account"
+    }
+}
+
+export type IBalanceByAddress = {
+    [address: string]: IAccountSnapshotQuery
 }

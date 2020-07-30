@@ -25,6 +25,10 @@ const useStyles = makeStyles(theme => ({
   dropDown: {
     gridColumn: '3 / 45'
   },
+  divider: {
+    gridColumn: '3 / 48',
+    marginTop: '2rem'
+  },
   link: {
     gridColumn: '1 / 49',
     padding: 0,
