@@ -27,7 +27,16 @@ async function parseEnrichMessages(messages: Topics, setState: Function) {
   if (!parsed) return
   const rawPolls: Message[] = parsed['polls']
   const network = await getNetwork()
-  const enrichedPolls: Message[] = await enrichMessages(rawPolls)
+  const sigs = new Set()
+  const filteredPolls = rawPolls.filter(poll => {
+    const { sigMsg }  = poll
+    if (!sigMsg || !sigMsg.sig) return false
+    if (sigs.has(sigMsg.sig)) return false
+    sigs.add(sigMsg.sig)
+    return true
+  })
+  console.log({rawPolls, filteredPolls})
+  const enrichedPolls: Message[] = await enrichMessages(filteredPolls)
   const polls = enrichedPolls.filter(
     p => {
       if (!!p.pollInfo && !!p.pollInfo.network) {
@@ -92,14 +101,14 @@ function TableCards({ polls }: ITableCard) {
   return (
     <Fragment>
       {polls.map((poll, i) => {
-        const { pollInfo, messageId, formattedEndDate } = poll
+        const { pollInfo, messageId, formattedEndDate, sigMsg } = poll
         if (!formattedEndDate || !formattedEndDate.plainText) return
         const { plainText } = formattedEndDate
         if (!pollInfo) return
         const { title, description } = pollInfo
         const cellStyling = isOdd(i) ? classnames(cardText) : classnames(cardText, cellColor)
         const lightText = classnames(cellStyling, classes.cardLightText)
-        const pollUrl = `/poll/${messageId}`
+        const pollUrl = `/poll/${sigMsg?.msg}`
         return (
           <Fragment key={pollUrl}>
             <Typography className={classnames(cellStyling, classes.cardTitle)}>{title}</Typography>
@@ -122,23 +131,24 @@ function ListPolls() {
   const { dispatchSetTopics, chatMessages } = messagesContext
 
   const classes: any = useStyles()
-
+  const hasRawPolls = rawMessages && 'polls' in rawMessages
   useEffect(() => {
     getChatMessages()
   }, [])
 
   useEffect(() => {
-    if (rawMessages && dispatchSetTopics) parseEnrichMessages(rawMessages, dispatchSetTopics)
+    if (rawMessages && hasRawPolls && dispatchSetTopics) parseEnrichMessages(rawMessages, dispatchSetTopics)
   }, [rawMessages])
 
+  const hasPolls = chatMessages && 'polls' in chatMessages
   return (
     <Fragment>
       <div className={classes.root}>
-        {!chatMessages && <StatusButton
+        {!hasPolls && <StatusButton
           buttonText="Goto #polls to get started"
           onClick={gotoPolls}
         />}
-        {!!chatMessages && <TableCards polls={chatMessages['polls'] || []} />}
+        {chatMessages && hasPolls && <TableCards polls={chatMessages['polls'] || []} />}
       </div>
     </Fragment>
   )

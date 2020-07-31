@@ -131,8 +131,8 @@ function DisplayVoteProgress({ballots, tabulated}: IVoteProgress) {
       <Typography className={classes.resultText}>Vote results</Typography>
       {ballots.map((ballot, idx) => {
         const count = tabulated[idx]
-        const progress = Math.floor(count / total * 100)
-        return <LinearProgressWithLabel value={progress} ballot={ballot} />
+        const progress = Math.floor(!count ? 0 : count / total * 100)
+        return <LinearProgressWithLabel key={ballot} value={progress} ballot={ballot} />
       })}
     </Fragment>
   )
@@ -155,16 +155,13 @@ function Poll() {
   }, [rawMessages])
 
   if (!chatMessages) return <Fragment />
-  const selectedPoll= chatMessages['polls'].find(p => p.messageId === id)
+  const selectedPoll= chatMessages['polls'].find(p => p.sigMsg?.msg === id)
   if (!selectedPoll || !selectedPoll.pollInfo) return (<div>poll not found</div>)
   const { pollInfo } = selectedPoll
   const { description, title, subtitle, pollOptions } = pollInfo
   const options: string[] = pollOptions.split(',')
   const votes: Message[] = chatMessages[topic]
   const tabulated: number[] = tabulateVotes(votes, options)
-  // TODO Add method to tabulate votes
-  // get all votes, filter by messageId, filter out not verified, grab all addresses, get balances, enrich votes with balances
-  console.log({messagesContext, rawMessages, votes, tabulated})
 
   return (
     <Formik
