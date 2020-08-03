@@ -35,7 +35,6 @@ async function parseEnrichMessages(messages: Topics, setState: Function) {
     sigs.add(sigMsg.sig)
     return true
   })
-  console.log({rawPolls, filteredPolls})
   const enrichedPolls: Message[] = await enrichMessages(filteredPolls)
   const polls = enrichedPolls.filter(
     p => {
@@ -98,9 +97,11 @@ function TableCards({ polls }: ITableCard) {
   const classes: any = useStyles()
   const { cardText, cellColor } = classes
 
+  // @ts-ignore
+  const sorted = polls.sort((a,b) => b.formattedEndDate?.daysRemaining - a.formattedEndDate?.daysRemaining)
   return (
     <Fragment>
-      {polls.map((poll, i) => {
+      {sorted.map((poll, i) => {
         const { pollInfo, formattedEndDate, sigMsg } = poll
         if (!formattedEndDate || !formattedEndDate.plainText) return
         const { plainText, daysRemaining } = formattedEndDate
@@ -115,7 +116,7 @@ function TableCards({ polls }: ITableCard) {
             <Typography className={classnames(cellStyling, classes.cardSubTitle)}>{description}</Typography>
             <Typography className={lightText}>{plainText}</Typography>
             <Link to={pollUrl} className={classnames(cellStyling, classes.link)}>
-              <Typography className={classnames(cellStyling, classes.voteNow)}>{daysRemaining ? 'Vote now' : 'Vote results'}</Typography>
+              <Typography className={classnames(cellStyling, classes.voteNow)}>{daysRemaining > 0 ? 'Vote now' : 'Vote results'}</Typography>
             </Link>
           </Fragment>
         )
