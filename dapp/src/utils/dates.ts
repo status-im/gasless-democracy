@@ -15,7 +15,7 @@ export const timeRemaining = (date: Date | string | null): string => {
     const totalHours = hoursDiff(dateStr)
     const remainder = totalHours % 24
     const days = Math.floor(totalHours / 24)
-    const str = totalHours > 0 ? `${days} days and ${remainder} hours until vote ends` : `Vote ended ${Math.abs(days)} ago`
+    const str = totalHours > 0 ? `${days} days and ${remainder} hours until vote ends` : `Vote ended ${Math.abs(days)} days ago`
     return str
 }
 

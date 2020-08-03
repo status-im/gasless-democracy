@@ -101,9 +101,9 @@ function TableCards({ polls }: ITableCard) {
   return (
     <Fragment>
       {polls.map((poll, i) => {
-        const { pollInfo, messageId, formattedEndDate, sigMsg } = poll
+        const { pollInfo, formattedEndDate, sigMsg } = poll
         if (!formattedEndDate || !formattedEndDate.plainText) return
-        const { plainText } = formattedEndDate
+        const { plainText, daysRemaining } = formattedEndDate
         if (!pollInfo) return
         const { title, description } = pollInfo
         const cellStyling = isOdd(i) ? classnames(cardText) : classnames(cardText, cellColor)
@@ -115,7 +115,7 @@ function TableCards({ polls }: ITableCard) {
             <Typography className={classnames(cellStyling, classes.cardSubTitle)}>{description}</Typography>
             <Typography className={lightText}>{plainText}</Typography>
             <Link to={pollUrl} className={classnames(cellStyling, classes.link)}>
-              <Typography className={classnames(cellStyling, classes.voteNow)}>Vote now</Typography>
+              <Typography className={classnames(cellStyling, classes.voteNow)}>{daysRemaining ? 'Vote now' : 'Vote results'}</Typography>
             </Link>
           </Fragment>
         )

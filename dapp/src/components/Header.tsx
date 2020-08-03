@@ -22,7 +22,7 @@ function Header({account, isStatus, enableEthereum}: HeaderProps) {
   const [network, sNetwork] = useState()
 
   useEffect(() => {
-    setNetwork(sNetwork)
+    if (account) setNetwork(sNetwork)
   }, [account])
 
   return (
