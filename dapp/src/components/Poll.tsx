@@ -21,6 +21,7 @@ import { verifyMessages } from '../utils/messages'
 import { Topics, IAccountSnapshotQuery, IBalanceByAddress, Message } from '../types'
 import { ApolloClient, InMemoryCache } from '@apollo/client'
 import { getAccountBalances } from '../queries'
+import RefreshIcon from '@material-ui/icons/Refresh'
 
 const SNT_ROPSTEN_SUBGRAPH = 'https://api.thegraph.com/subgraphs/name/bgits/status-snt'
 
@@ -121,14 +122,16 @@ function LinearProgressWithLabel(props: IProgressLabel) {
 }
 type IVoteProgress = {
   ballots: string[],
-  tabulated: number[]
+  tabulated: number[],
+  refresh: any
 }
-function DisplayVoteProgress({ballots, tabulated}: IVoteProgress) {
+function DisplayVoteProgress({ballots, tabulated, refresh}: IVoteProgress) {
   const total = tabulated.reduce((a,b) => a+b)
   const classes: any = useStyles()
   return (
     <Fragment>
       <Typography className={classes.resultText}>Vote results</Typography>
+      <RefreshIcon className={classes.refresh} onClick={refresh} />
       {ballots.map((ballot, idx) => {
         const count = tabulated[idx]
         const progress = Math.floor(!count ? 0 : count / total * 100)
@@ -213,7 +216,7 @@ function Poll() {
               className={classes.button}
               buttonText="Goto room and get poll results"
               onClick={() => gotoPoll(topic)}
-            /> : <DisplayVoteProgress ballots={options} tabulated={tabulated} />}
+            /> : <DisplayVoteProgress ballots={options} tabulated={tabulated} refresh={() => gotoPoll(topic)} />}
           </form>
       )}
       }

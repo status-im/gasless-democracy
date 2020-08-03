@@ -51,9 +51,12 @@ const useStyles = makeStyles(theme => ({
     gridColumn: '3 / 43'
   },
   resultText: {
-    gridColumn: '1/ 49',
+    gridColumn: '1/ 42',
     placeSelf: 'center',
     fontSize: '1.5rem'
+  },
+  refresh: {
+    placeSelf: 'center'
   }
 }))
 
