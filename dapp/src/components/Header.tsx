@@ -17,7 +17,7 @@ type HeaderProps = {
   enableEthereum: EnableEthereum
 }
 
-function Header({account, isStatus, enableEthereum}: HeaderProps) {
+function Header({account, enableEthereum}: HeaderProps) {
   const classes: any = useStyles()
   const [network, sNetwork] = useState()
 
@@ -37,7 +37,6 @@ function Header({account, isStatus, enableEthereum}: HeaderProps) {
           <div>Connected</div>
         </div>}
         {!account && <span>Connect</span>}
-        {isStatus && <span>Status Api Available</span>}
       </Typography>
     </div>
   )
