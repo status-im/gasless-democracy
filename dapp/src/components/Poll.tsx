@@ -22,7 +22,9 @@ import { Topics, IAccountSnapshotQuery, IBalanceByAddress, Message } from '../ty
 import { ApolloClient, InMemoryCache } from '@apollo/client'
 import { getAccountBalances } from '../queries'
 import RefreshIcon from '@material-ui/icons/Refresh'
+import { sum, memoize } from 'lodash'
 
+const mSum = memoize(sum)
 const SNT_ROPSTEN_SUBGRAPH = 'https://api.thegraph.com/subgraphs/name/bgits/status-snt'
 
 const client = new ApolloClient({
@@ -126,7 +128,7 @@ type IVoteProgress = {
   refresh: any
 }
 function DisplayVoteProgress({ballots, tabulated, refresh}: IVoteProgress) {
-  const total = tabulated.reduce((a,b) => a+b)
+  const total = mSum(tabulated)
   const classes: any = useStyles()
   return (
     <Fragment>
@@ -165,6 +167,8 @@ function Poll() {
   const options: string[] = pollOptions.split(',')
   const votes: Message[] = chatMessages[topic]
   const tabulated: number[] = tabulateVotes(votes, options)
+  const tabulatedSum: number = mSum(tabulated)
+  console.log({tabulated, votes})
 
   return (
     <Formik
@@ -211,7 +215,7 @@ function Poll() {
               onClick={handleSubmit}
             />
             <Divider className={classes.divider} />
-            {!tabulated.length ? <StatusButton
+            {!tabulatedSum ? <StatusButton
               type="button"
               className={classes.button}
               buttonText="Goto room and get poll results"
