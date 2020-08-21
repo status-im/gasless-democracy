@@ -13,6 +13,11 @@ export enum Network {
     ROPSTEN = 'ropsten'
 }
 
+export enum MessagingEnv {
+    BOX = 'box',
+    WAKU = 'waku'
+}
+
 export type ISignedMessage = {
     address: string,
     msg: string,

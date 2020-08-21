@@ -16,10 +16,15 @@ import { getFromIpfs } from '../utils/ipfs'
 import { POLLS_CHANNEL } from './constants'
 import { getFormattedDate } from '../utils/dates'
 import { getNetwork } from '../utils/network'
+import { openSpace } from '../utils/3box'
 
 async function gotoPolls() {
   await gotoPublicChat(POLLS_CHANNEL)
   getChatMessages()
+}
+
+async function gotoPollsSpace() {
+  // implement openspace
 }
 
 async function parseEnrichMessages(messages: Topics, setState: Function) {
